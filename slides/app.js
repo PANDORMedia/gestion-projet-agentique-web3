@@ -46,13 +46,14 @@
     stage.scrollTop=0;
     counter.textContent=`${index+1} / ${slides.length}`;
     progress.style.width=`${100*(index+1)/slides.length}%`;
-    progress.style.background=day===1?'var(--orange)':'var(--teal)';
+    progress.style.background=[2,3,4].includes(day)?'var(--teal)':'var(--orange)';
     document.getElementById('previousButton').disabled=index===0;
     document.getElementById('nextButton').disabled=index===slides.length-1;
     exerciseButton.disabled=!slide.exercise;
     if(!slide.exercise)exercisePanel.hidden=true;
     else if(!exercisePanel.hidden)loadExercise(slide.exercise);
     days.forEach(b=>b.classList.toggle('is-active',Number(b.dataset.day)===day));
+    document.getElementById('moduleSelect').value=String(day);
     buildMenu();
     location.hash=`j${day}-${index+1}`;
     if(broadcast&&!preview)window.DeckSync.publish(day,index);
@@ -66,10 +67,11 @@
     try{const r=await fetch(url);if(!r.ok)throw Error('Énoncé introuvable');exerciseBody.innerHTML=markdown(await r.text());exerciseBody.querySelectorAll('a[href]').forEach(a=>{if(!/^https?:\/\//.test(a.getAttribute('href')))a.href=new URL(a.getAttribute('href'),url).href})}catch(e){exerciseBody.innerHTML=`<p>${esc(e.message)}</p>`}
   }
   function go(n){const slides=current();index=Math.max(0,Math.min(slides.length-1,index+n));render()}
-  function selectDay(n){if(![1,2,3].includes(n))return;day=n;index=0;exercisePanel.hidden=true;render()}
+  function selectDay(n){if(![1,2,3,4,5,6,7].includes(n))return;day=n;index=0;exercisePanel.hidden=true;render()}
   document.getElementById('previousButton').onclick=()=>go(-1);
   document.getElementById('nextButton').onclick=()=>go(1);
   days.forEach(b=>b.onclick=()=>selectDay(Number(b.dataset.day)));
+  document.getElementById('moduleSelect').onchange=e=>selectDay(Number(e.target.value));
   document.getElementById('menuButton').onclick=()=>menu.hidden=!menu.hidden;
   exerciseButton.onclick=()=>{if(exerciseButton.disabled)return;exercisePanel.hidden=!exercisePanel.hidden;if(!exercisePanel.hidden)loadExercise(current()[index].exercise)};
   document.getElementById('presenterButton').onclick=()=>{
@@ -83,15 +85,15 @@
     if(e.target instanceof Element&&e.target.closest('button,select,input,textarea,a,[contenteditable="true"]'))return;
     if(['ArrowRight','ArrowDown',' '].includes(e.key)){e.preventDefault();go(1)}
     else if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();go(-1)}
-    else if(['1','2','3'].includes(e.key))selectDay(Number(e.key));
+    else if(['1','2','3','4','5','6','7'].includes(e.key))selectDay(Number(e.key));
     else if(e.key.toLowerCase()==='t')exerciseButton.click();
     else if(e.key.toLowerCase()==='p'&&!preview&&!document.getElementById('presenterButton').hidden)document.getElementById('presenterButton').click();
     else if(e.key.toLowerCase()==='f')document.getElementById('fullscreenButton').click();
     else if(e.key==='Escape'){menu.hidden=true;exercisePanel.hidden=true}
   });
   let touch=0;stage.addEventListener('touchstart',e=>touch=e.changedTouches[0].clientX,{passive:true});stage.addEventListener('touchend',e=>{const diff=touch-e.changedTouches[0].clientX;if(Math.abs(diff)>70)go(diff>0?1:-1)},{passive:true});
-  window.addEventListener('hashchange',()=>{const m=location.hash.match(/^#j([123])-(\d+)$/);if(!m)return;const targetDay=Number(m[1]),targetIndex=Math.max(0,Math.min(deck.filter(s=>s.day===targetDay).length-1,Number(m[2])-1));if(day!==targetDay||index!==targetIndex){day=targetDay;index=targetIndex;render()}});
-  const match=location.hash.match(/^#j([123])-(\d+)$/);if(match){day=Number(match[1]);index=Math.max(0,Math.min(current().length-1,Number(match[2])-1))}
+  window.addEventListener('hashchange',()=>{const m=location.hash.match(/^#j([1-7])-(\d+)$/);if(!m)return;const targetDay=Number(m[1]),targetIndex=Math.max(0,Math.min(deck.filter(s=>s.day===targetDay).length-1,Number(m[2])-1));if(day!==targetDay||index!==targetIndex){day=targetDay;index=targetIndex;render()}});
+  const match=location.hash.match(/^#j([1-7])-(\d+)$/);if(match){day=Number(match[1]);index=Math.max(0,Math.min(current().length-1,Number(match[2])-1))}
   if(preview)document.body.classList.add('is-preview');
   if(!preview){
     window.DeckSync.onSlide((targetDay,targetIndex)=>{

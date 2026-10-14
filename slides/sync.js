@@ -8,7 +8,7 @@
   let channel = null;
 
   function valid(message) {
-    return message && message.type === 'slide' && [1, 2, 3].includes(message.day)
+    return message && message.type === 'slide' && [1, 2, 3, 4, 5, 6, 7].includes(message.day)
       && Number.isInteger(message.index) && message.index >= 0;
   }
   function receive(message) {

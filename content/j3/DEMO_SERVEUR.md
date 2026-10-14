@@ -39,7 +39,7 @@ curl -sS -i -X POST -H 'Content-Type: application/json' \
   "$TRAVEL_API_URL/api/v1/options"
 ```
 
-Conservez l'`option.id`, le `prix_total_eur`, le `statut` et `expire_le` du JSON retourné. L'option bloque deux places pendant **30 minutes**. Le serveur revérifie prix et disponibilité au moment du `POST` : la réponse peut différer d'une consultation antérieure. Une option pour une activité ou un hôtel demande un autre appel et peut échouer indépendamment.
+Conservez l'`option.id`, le `prix_total_eur`, le `statut` et `expire_le` du JSON retourné. L'option bloque deux places pendant **30 minutes**. Le serveur revérifie prix et disponibilité au moment du `POST` : la réponse peut différer d'une consultation antérieure. Comparez le total reçu au montant accepté. En cas de différence, l'option existe déjà : conservez cet effet, placez le dossier à revoir, informez le conseiller et suspendez toute confirmation ou répétition automatique. Aucune annulation d'option n'est fournie. Une option pour une activité ou un hôtel demande un autre appel et peut échouer indépendamment.
 
 Pour observer l'état de votre équipe :
 

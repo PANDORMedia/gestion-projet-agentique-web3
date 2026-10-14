@@ -4,7 +4,7 @@
 **Public :** WEB3, début d'année  
 **Volume :** 7 journées de 7 h : 4 journées de Gestion de projet / Conception (28 h), dont une en FOAD ; 3 journées d'Agentique IA (21 h)  
 **Format :** équipes de 3 à 4 ; apports courts, démonstrations, ateliers, réunions client jouées et soutenance d'équipe avec questions individuelles  
-**Supports préparés :** conception, fondations IA et actions IA ; progression complète sur sept journées
+**Supports préparés :** sept séquences, cours écrits, slides, briefs et exercices
 
 ## Intention
 
