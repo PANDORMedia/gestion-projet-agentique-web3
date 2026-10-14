@@ -14,14 +14,15 @@
 <body>
   <header class="toolbar">
     <a class="brand" href="./index.html" aria-label="Retour au début"><span class="brand-mark">↗</span><span>DÉTOUR<span class="brand-sub"> / WEB3</span></span></a>
-    <nav class="days" aria-label="Journées">
-      <button class="day is-active" data-day="1">J1 <span>Concevoir</span></button>
-      <button class="day" data-day="2">J2 <span>Agentique IA</span></button>
+    <nav class="days" aria-label="Modules">
+      <button class="day is-active" data-day="1">Projet <span>Conception</span></button>
+      <button class="day" data-day="2">Modèle <span>Fondations IA</span></button>
+      <button class="day" data-day="3">Action <span>Agentique IA</span></button>
     </nav>
     <div class="controls">
       <button id="menuButton" title="Sommaire" aria-label="Sommaire">☷</button>
       <button id="exerciseButton" title="Exercice (T)" aria-label="Exercice" disabled>TP</button>
-      <button id="notesButton" title="Notes orateur (N)" aria-label="Notes orateur" hidden>N</button>
+      <button id="presenterButton" hidden title="Ouvrir la vue présentateur (P)" aria-label="Ouvrir la vue présentateur"><span class="presenter-long">Présentateur ↗</span><span class="presenter-short">P</span></button>
       <button id="fullscreenButton" title="Plein écran (F)" aria-label="Plein écran">⛶</button>
       <button id="previousButton" title="Précédent" aria-label="Précédent">←</button>
       <span id="counter" class="counter">1 / 1</span>
@@ -35,12 +36,9 @@
     <div class="panel-head"><strong>Atelier</strong><div><a id="exerciseLink" href="#" target="_blank" rel="noopener">Ouvrir ↗</a><button id="closeExercise" aria-label="Fermer">×</button></div></div>
     <article id="exerciseBody" class="markdown"></article>
   </aside>
-  <aside id="notesPanel" class="notes-panel" aria-label="Notes orateur" hidden>
-    <div class="panel-head"><strong>Notes orateur</strong><button id="closeNotes" aria-label="Fermer">×</button></div>
-    <p id="notesBody"></p>
-  </aside>
-  <footer class="hint"><span>← → naviguer</span><span>1 / 2 journée</span><span>T atelier</span><span>F plein écran</span></footer>
+  <footer class="hint"><span>← → naviguer</span><span>1 / 2 / 3 module</span><span>T atelier</span><span>F plein écran</span></footer>
   <script src="./deck.js"></script>
+  <script src="./sync.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>

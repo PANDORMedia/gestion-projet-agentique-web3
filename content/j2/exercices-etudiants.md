@@ -1,10 +1,20 @@
-# J2 : Feuille d'exercices
+# Agentique IA : feuille d'exercices
 
-**Mission :** préparer le premier agent de **DÉTOUR**, l'agence de voyages fictive. Vous disposez de votre dossier de cadrage J1 et d'un serveur de prestations fourni par le cours. En J2, votre agent **consulte** une prestation et sa disponibilité. Il ne réserve rien.
+Le [brief agent](../../output/pdf/brief-agent.pdf) fixe la mission et la preuve à produire. La [charte IA remise en cours](../../output/pdf/charte-ia-web3.pdf) s'applique à ce TP.
 
-Travaillez par équipes de 3 ou 4. Changez de rôle au cours de la journée : une personne pilote l'essai, une dessine la boucle, une contrôle les faits, une observe les traces. Conservez les décisions utiles dans votre dépôt.
+**Mission :** préparer le premier agent de **DÉTOUR**, l'agence de voyages fictive. Vous disposez de votre dossier de cadrage et d'un serveur de prestations fourni par le cours. Dans ce TP, votre agent **consulte** une prestation et sa disponibilité. Il ne réserve rien.
 
-## Exercice 1 : Même demande, mécanismes différents · 15 min
+Travaillez par équipes de 3 ou 4. Changez de rôle au fil des exercices : une personne pilote l'essai, une dessine la boucle, une contrôle les faits, une observe les traces. Conservez les décisions utiles dans votre dépôt.
+
+## Exercice 1 : Appliquer la charte IA · 8 min
+
+La charte vous est remise par le formateur. Pour chaque cas, écrivez **l'action à prendre** et la règle de la charte qui la motive.
+
+1. Un étudiant colle une vraie clé OpenRouter dans son code, puis pousse le dépôt pour que ses coéquipiers puissent l'utiliser.
+2. Le modèle propose un prix plausible mais la consultation du serveur a échoué.
+3. L'agent du TP propose de confirmer une réservation pour gagner du temps.
+
+## Exercice 2 : Même demande, mécanismes différents · 18 min
 
 Demande de l'agence : « Deux personnes veulent partir de Paris le 7 novembre. Elles aiment la culture et disposent de 180 € chacune pour transport et activité. Proposez une destination. »
 
@@ -19,7 +29,7 @@ Quatre systèmes répondent :
 
 Pour chacun, indiquez : source de l'information, part de génération, possibilité de vérifier le prix et les places, et risque principal. Quelle sortie peut soutenir une décision de conseiller ? Quelle vérification reste nécessaire ?
 
-## Exercice 2 : Une réponse convaincante peut être fausse · 20 min
+## Exercice 3 : Une réponse convaincante peut être fausse · 15 min
 
 Le catalogue retourne seulement :
 
@@ -33,7 +43,7 @@ Un assistant affirme : « Le train Paris–Nantes coûte 48 € pour deux, il re
 2. Réécrivez une réponse honnête à envoyer au conseiller en trois lignes maximum.
 3. Écrivez les questions que l'application doit poser au serveur avant de pouvoir annoncer un total et des places restantes.
 
-## Exercice 3 : Assistant, workflow ou agent ? · 20 min
+## Exercice 4 : Assistant, workflow ou agent ? · 15 min
 
 Classez ces quatre mécanismes et justifiez en une phrase :
 
@@ -44,7 +54,7 @@ Classez ces quatre mécanismes et justifiez en une phrase :
 
 Indiquez pour les cas 2 et 3 lequel vous choisiriez pour une vérification de prix simple, et pourquoi. Il peut y avoir plusieurs réponses défendables.
 
-## Exercice 4 : Dessiner le système avant le code · 20 min
+## Exercice 5 : Dessiner le système avant le code · 15 min
 
 Sur une page, placez : **voyageur**, **conseiller**, **votre application**, **OpenRouter / modèle**, **serveur de prestations**. Tracez les échanges pour la question : « Y a-t-il deux places sur `train-nantes-01` le 7 novembre 2026 ? »
 
@@ -57,15 +67,7 @@ Marquez d'une couleur :
 
 Ajoutez deux conditions d'arrêt et une réaction à l'échec du serveur.
 
-## Exercice 5 : Appliquer la charte IA · 15 min
-
-La charte vous est remise par le formateur. Pour chaque cas, écrivez **l'action à prendre** et la règle de la charte qui la motive.
-
-1. Un étudiant colle une vraie clé OpenRouter dans son code, puis pousse le dépôt pour que ses coéquipiers puissent l'utiliser.
-2. Le modèle propose un prix plausible mais la consultation du serveur a échoué.
-3. Un agent de J2 propose de confirmer une réservation pour gagner du temps.
-
-## Exercice 6 : Contrat du premier agent · 35 min + 15 min de revue
+## Exercice 6 : Contrat du premier agent · 20 min + 10 min de revue
 
 Rédigez une page maximum. Remplissez chaque ligne de façon testable :
 
@@ -77,7 +79,7 @@ Rédigez une page maximum. Remplissez chaque ligne de façon testable :
 | Outil exposé au modèle | Nom, description, arguments admis. |
 | Contrôle dans votre programme | Que validez-vous avant l'appel HTTP ? |
 | Réponse attendue | Faits vérifiés, hypothèses, incertitudes et suite. |
-| Action interdite en J2 | Qu'est-ce que l'agent ne peut pas faire ? |
+| Action interdite dans ce TP | Qu'est-ce que l'agent ne peut pas faire ? |
 | Erreurs et arrêt | Serveur indisponible, argument invalide, limite d'étapes. |
 | Trace | Quels événements conserver sans secrets ? |
 
@@ -106,7 +108,11 @@ Lorsque vos clés d'équipe sont distribuées, utilisez-les dans la configuratio
 
 Créez ou récupérez une clé OpenRouter selon les consignes du formateur. Placez-la dans `OPENROUTER_API_KEY`, hors du dépôt et hors du navigateur. Choisissez un identifiant de modèle **gratuit et compatible avec l'appel d'outils** sur [la liste des modèles](https://openrouter.ai/models?supported_parameters=tools). Vérifiez sa page et placez l'identifiant dans `OPENROUTER_MODEL`. Le choix peut évoluer d'une séance à l'autre. Gardez une seule option gratuite ; n'ajoutez pas de modèle payant de secours.
 
+Notez en quatre lignes votre choix de client de développement et de modèle : nom et identifiant exacts, date de vérification, raison liée à la mission DÉTOUR, limite ou risque observé. Réutilisez cette décision au bilan, même si le service gratuit ne répond pas pendant le TP.
+
 OpenRouter reçoit les appels à `https://openrouter.ai/api/v1/chat/completions` avec la clé dans l'en-tête `Authorization: Bearer ...`. Votre programme, côté serveur, envoie une requête comprenant la demande, la définition de l'outil et le modèle choisi. Le [format officiel des appels d'outils](https://openrouter.ai/docs/guides/features/tool-calling) montre le retour `tool_calls` et le message de résultat à renvoyer ensuite.
+
+Pour ce TP, utilisez le format **Chat Completions OpenAI-compatible** d'OpenRouter. Le format Anthropic Messages et les serveurs locaux étudiés dans le cours ne sont pas requis dans votre implémentation.
 
 ### C. Construire la boucle minimale · 35 min
 
@@ -127,7 +133,7 @@ demande du conseiller
   → afficher la réponse et la trace
 ```
 
-Fixez une limite courte au nombre d'étapes. Si le modèle ne demande pas l'outil, si les arguments sont invalides ou si le serveur échoue, la réponse doit le dire sans inventer prix, disponibilité ou réservation. Ne fournissez aucune route de réservation à l'agent en J2.
+Fixez une limite courte au nombre d'étapes. Si le modèle ne demande pas l'outil, si les arguments sont invalides ou si le serveur échoue, la réponse doit le dire sans inventer prix, disponibilité ou réservation. Ne fournissez aucune route de réservation à l'agent dans ce TP.
 
 ### D. Deux essais et une trace · 25 min
 
@@ -138,9 +144,9 @@ Conservez une trace **sans clés** : question, demande d'outil, arguments après
 
 ### Si OpenRouter est indisponible pendant le TP
 
-Continuez avec la trace de démonstration fournie par le formateur : analysez les messages du modèle, validez les arguments et exécutez l'appel réel au serveur fictif. Livrez votre contrat, votre code de l'outil et le résultat de la consultation ; signalez que la boucle complète n'a pas pu être vérifiée en direct.
+Continuez avec [la trace de rejeu](TRACE_REJEU_ETUDIANT.md) : analysez le message du modèle, validez les arguments et exécutez l'appel réel au serveur fictif. Livrez votre contrat, votre code de l'outil et le résultat de la consultation ; signalez que la boucle complète n'a pas pu être vérifiée en direct.
 
-## À remettre avant 17 h
+## À produire
 
 - Schéma d'architecture annoté.
 - Contrat du premier agent, avec la correction issue de la revue croisée.

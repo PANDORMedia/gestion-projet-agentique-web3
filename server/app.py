@@ -7,9 +7,11 @@ import json
 import os
 import re
 import secrets
+import ssl
 import threading
 from datetime import date, datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.cookies import CookieError, SimpleCookie
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
@@ -42,6 +44,7 @@ class StateStore:
         self.instructor_key = instructor_key
         self.path = Path(path) if path else None
         self.lock = threading.RLock()
+        self.sessions = {}
         self.state = {"teams": {}}
         if self.path and self.path.exists():
             self.state = json.loads(self.path.read_text(encoding="utf-8"))
@@ -63,6 +66,31 @@ class StateStore:
             if secrets.compare_digest(supplied, credentials["key"]):
                 return name
         raise ApiError(403, "team_key_invalid", "Clé d'équipe invalide.")
+
+    def new_dashboard_session(self, supplied):
+        if not isinstance(supplied, str) or not supplied:
+            raise ApiError(400, "team_key_missing", "Saisissez une clé d'équipe.")
+        team = self.team_for_key(supplied)
+        token = secrets.token_urlsafe(32)
+        with self.lock:
+            self.sessions = {key: value for key, value in self.sessions.items()
+                             if value[1] > utc_now()}
+            self.sessions[token] = (team, utc_now() + timedelta(minutes=30))
+        return token, team
+
+    def dashboard_team(self, supplied):
+        if not supplied:
+            raise ApiError(401, "dashboard_login_required", "Connectez-vous avec la clé de votre équipe.")
+        with self.lock:
+            session = self.sessions.get(supplied)
+            if not session or session[1] <= utc_now():
+                self.sessions.pop(supplied, None)
+                raise ApiError(401, "dashboard_session_expired", "Session expirée. Reconnectez-vous.")
+            return session[0]
+
+    def close_dashboard_session(self, supplied):
+        with self.lock:
+            self.sessions.pop(supplied, None)
 
     def require_approval(self, team, supplied):
         expected = self.teams[team]["approval_key"]
@@ -186,14 +214,102 @@ def make_handler(store):
         def log_message(self, fmt, *args):
             print("%s %s" % (self.address_string(), fmt % args))
 
-        def send_json(self, status, payload):
+        def send_json(self, status, payload, extra_headers=None):
             body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
             self.send_response(status)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
+            for name, value in (extra_headers or {}).items():
+                self.send_header(name, value)
             self.end_headers()
             self.wfile.write(body)
+
+        def send_dashboard_asset(self, filename, content_type):
+            body = (Path(__file__).parent / filename).read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
+            self.end_headers()
+            self.wfile.write(body)
+
+        def dashboard_cookie(self):
+            try:
+                cookies = SimpleCookie()
+                cookies.load(self.headers.get("Cookie", ""))
+                return cookies["detour_session"].value if "detour_session" in cookies else None
+            except CookieError:
+                return None
+
+        def session_cookie_header(self, token, max_age):
+            secure = "; Secure" if isinstance(self.connection, ssl.SSLSocket) else ""
+            return f"detour_session={token}; Path=/dashboard; Max-Age={max_age}; HttpOnly; SameSite=Strict{secure}"
+
+        def require_same_origin(self):
+            if self.headers.get("Sec-Fetch-Site") == "cross-site":
+                raise ApiError(403, "origin_invalid", "Origine de la requête refusée.")
+            origin = self.headers.get("Origin")
+            if origin and urlparse(origin).netloc != self.headers.get("Host"):
+                raise ApiError(403, "origin_invalid", "Origine de la requête refusée.")
+
+        def handle_dashboard(self, path, query):
+            assets = {
+                "/dashboard": ("dashboard.html", "text/html; charset=utf-8"),
+                "/dashboard/": ("dashboard.html", "text/html; charset=utf-8"),
+                "/dashboard/dashboard.css": ("dashboard.css", "text/css; charset=utf-8"),
+                "/dashboard/dashboard.js": ("dashboard.js", "text/javascript; charset=utf-8"),
+            }
+            if self.command == "GET" and path in assets:
+                return self.send_dashboard_asset(*assets[path])
+            if self.command == "POST" and path == "/dashboard/api/login":
+                self.require_same_origin()
+                supplied = self.read_json().get("team_key")
+                token, team = store.new_dashboard_session(supplied)
+                return self.send_json(200, {"equipe": team, "expire_dans_secondes": 1800},
+                                      {"Set-Cookie": self.session_cookie_header(token, 1800)})
+            if self.command == "POST" and path == "/dashboard/api/logout":
+                self.require_same_origin()
+                store.close_dashboard_session(self.dashboard_cookie())
+                return self.send_json(200, {"deconnecte": True},
+                                      {"Set-Cookie": self.session_cookie_header("", 0)})
+            if self.command != "GET":
+                raise ApiError(405, "method_not_allowed", "Le tableau de bord ne modifie pas les réservations.")
+            team = store.dashboard_team(self.dashboard_cookie())
+            if path == "/dashboard/api/me":
+                return self.send_json(200, {"equipe": team, "simulation": True})
+            if path == "/dashboard/api/catalogue":
+                type_filter = query.get("type", [None])[0]
+                destination_filter = query.get("destination", [None])[0]
+                items = [copy.deepcopy(item) for item in PRESTATIONS
+                         if (not type_filter or item["type"] == type_filter)
+                         and (not destination_filter or item["destination"].casefold() == destination_filter.casefold())]
+                return self.send_json(200, {"prestations": items, "simulation": True})
+            item_match = re.fullmatch(r"/dashboard/api/prestations/([a-z0-9-]+)", path)
+            if item_match:
+                item = BY_ID.get(item_match.group(1))
+                if not item:
+                    raise ApiError(404, "prestation_not_found", "Prestation inconnue.")
+                return self.send_json(200, {"prestation": item, "simulation": True})
+            if path == "/dashboard/api/disponibilites":
+                try:
+                    participants = int(query.get("participants", [""])[0])
+                except ValueError:
+                    participants = None
+                result = store.availability(team, query.get("prestation_id", [None])[0],
+                                            query.get("date", [None])[0], participants)
+                return self.send_json(200, result)
+            if path == "/dashboard/api/options":
+                with store.lock:
+                    options = copy.deepcopy(list(store.state["teams"][team]["options"].values()))
+                return self.send_json(200, {"options": options, "simulation": True})
+            if path == "/dashboard/api/reservations":
+                with store.lock:
+                    reservations = copy.deepcopy(list(store.state["teams"][team]["reservations"].values()))
+                return self.send_json(200, {"reservations": reservations, "simulation": True})
+            raise ApiError(404, "not_found", "Route inconnue.")
 
         def read_json(self):
             length = self.headers.get("Content-Length", "0")
@@ -217,6 +333,8 @@ def make_handler(store):
                 path, query = parsed.path, parse_qs(parsed.query)
                 if self.command == "GET" and path == "/health":
                     return self.send_json(200, {"status": "ok", "simulation": True})
+                if path == "/dashboard" or path.startswith("/dashboard/"):
+                    return self.handle_dashboard(path, query)
                 instructor_match = re.fullmatch(r"/api/v1/instructor/teams/([a-zA-Z0-9_-]+)/(incidents|reset)", path)
                 if instructor_match and self.command == "POST":
                     store.require_instructor(self.headers.get("X-Instructor-Key"))
@@ -306,6 +424,7 @@ def main():
     store = StateStore(teams, instructor_key, args.state_file)
     server = ThreadingHTTPServer((args.host, args.port), make_handler(store))
     print(f"API fictive sur http://{args.host}:{server.server_port} : {len(teams)} équipe(s)", flush=True)
+    print(f"Tableau de bord sur http://{args.host}:{server.server_port}/dashboard", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

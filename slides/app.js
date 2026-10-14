@@ -5,14 +5,12 @@
   const progress=document.getElementById('progressBar');
   const menu=document.getElementById('menuPanel');
   const exercisePanel=document.getElementById('exercisePanel');
-  const notesPanel=document.getElementById('notesPanel');
   const exerciseButton=document.getElementById('exerciseButton');
-  const notesButton=document.getElementById('notesButton');
   const exerciseBody=document.getElementById('exerciseBody');
   const exerciseLink=document.getElementById('exerciseLink');
-  const notesBody=document.getElementById('notesBody');
   const days=[...document.querySelectorAll('[data-day]')];
-  let day=1,index=0,notes={};
+  const preview=new URLSearchParams(location.search).has('preview');
+  let day=1,index=0;
 
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function markdown(src){
@@ -41,23 +39,23 @@
   }
   function inline(s){return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,(all,label,url)=>/^(https?:\/\/|\.{0,2}\/|[A-Za-z0-9][A-Za-z0-9._/-]*$)/.test(url)?`<a href="${url}" target="_blank" rel="noopener">${label}</a>`:all)}
   function current(){return deck.filter(s=>s.day===day)}
-  function render(){
+  function render(broadcast=true){
     const slides=current(),slide=slides[index];if(!slide)return;
     stage.dataset.day=String(day);
-    stage.innerHTML=`<section class="slide"><div class="eyebrow">${esc(slide.eyebrow||`J${day}`)}</div>${slide.hero?`<h1>${slide.title}</h1>`:`<h2>${slide.title}</h2>`}${slide.subtitle?`<p class="subtitle">${slide.subtitle}</p>`:''}<div class="visual">${slide.html||''}</div></section>`;
+    stage.innerHTML=`<section class="slide"><div class="eyebrow">${esc(slide.eyebrow||'DÉTOUR')}</div>${slide.hero?`<h1>${slide.title}</h1>`:`<h2>${slide.title}</h2>`}${slide.subtitle?`<p class="subtitle">${slide.subtitle}</p>`:''}<div class="visual">${slide.html||''}</div></section>`;
     stage.scrollTop=0;
     counter.textContent=`${index+1} / ${slides.length}`;
     progress.style.width=`${100*(index+1)/slides.length}%`;
-    progress.style.background=day===2?'var(--teal)':'var(--orange)';
+    progress.style.background=day===1?'var(--orange)':'var(--teal)';
     document.getElementById('previousButton').disabled=index===0;
     document.getElementById('nextButton').disabled=index===slides.length-1;
     exerciseButton.disabled=!slide.exercise;
     if(!slide.exercise)exercisePanel.hidden=true;
     else if(!exercisePanel.hidden)loadExercise(slide.exercise);
-    notesBody.textContent=notes[slide.id]||'Consulter le script formateur.';
     days.forEach(b=>b.classList.toggle('is-active',Number(b.dataset.day)===day));
     buildMenu();
     location.hash=`j${day}-${index+1}`;
+    if(broadcast&&!preview)window.DeckSync.publish(day,index);
   }
   function buildMenu(){
     menu.innerHTML=current().map((s,i)=>`<button data-index="${i}" class="${i===index?'is-active':''}"><small>${String(i+1).padStart(2,'0')}</small>${s.menu||s.title.replace(/<[^>]+>/g,'')}</button>`).join('');
@@ -68,29 +66,42 @@
     try{const r=await fetch(url);if(!r.ok)throw Error('Énoncé introuvable');exerciseBody.innerHTML=markdown(await r.text());exerciseBody.querySelectorAll('a[href]').forEach(a=>{if(!/^https?:\/\//.test(a.getAttribute('href')))a.href=new URL(a.getAttribute('href'),url).href})}catch(e){exerciseBody.innerHTML=`<p>${esc(e.message)}</p>`}
   }
   function go(n){const slides=current();index=Math.max(0,Math.min(slides.length-1,index+n));render()}
-  function selectDay(n){if(![1,2].includes(n))return;day=n;index=0;exercisePanel.hidden=true;notesPanel.hidden=true;render()}
+  function selectDay(n){if(![1,2,3].includes(n))return;day=n;index=0;exercisePanel.hidden=true;render()}
   document.getElementById('previousButton').onclick=()=>go(-1);
   document.getElementById('nextButton').onclick=()=>go(1);
   days.forEach(b=>b.onclick=()=>selectDay(Number(b.dataset.day)));
   document.getElementById('menuButton').onclick=()=>menu.hidden=!menu.hidden;
-  exerciseButton.onclick=()=>{if(exerciseButton.disabled)return;exercisePanel.hidden=!exercisePanel.hidden;notesPanel.hidden=true;if(!exercisePanel.hidden)loadExercise(current()[index].exercise)};
-  notesButton.onclick=()=>{notesPanel.hidden=!notesPanel.hidden;exercisePanel.hidden=true};
+  exerciseButton.onclick=()=>{if(exerciseButton.disabled)return;exercisePanel.hidden=!exercisePanel.hidden;if(!exercisePanel.hidden)loadExercise(current()[index].exercise)};
+  document.getElementById('presenterButton').onclick=()=>{
+    const url=new URL('./presenter.html',location.href);
+    url.hash=`j${day}-${index+1}`;
+    window.open(url.href,'detour-presenter','popup,width=1380,height=900');
+  };
   document.getElementById('closeExercise').onclick=()=>exercisePanel.hidden=true;
-  document.getElementById('closeNotes').onclick=()=>notesPanel.hidden=true;
   document.getElementById('fullscreenButton').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
   document.addEventListener('keydown',e=>{
-    if(e.target instanceof HTMLInputElement||e.target instanceof HTMLTextAreaElement)return;
+    if(e.target instanceof Element&&e.target.closest('button,select,input,textarea,a,[contenteditable="true"]'))return;
     if(['ArrowRight','ArrowDown',' '].includes(e.key)){e.preventDefault();go(1)}
     else if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();go(-1)}
-    else if(e.key==='1'||e.key==='2')selectDay(Number(e.key));
+    else if(['1','2','3'].includes(e.key))selectDay(Number(e.key));
     else if(e.key.toLowerCase()==='t')exerciseButton.click();
-    else if(e.key.toLowerCase()==='n'&&!notesButton.hidden)notesButton.click();
+    else if(e.key.toLowerCase()==='p'&&!preview&&!document.getElementById('presenterButton').hidden)document.getElementById('presenterButton').click();
     else if(e.key.toLowerCase()==='f')document.getElementById('fullscreenButton').click();
-    else if(e.key==='Escape'){menu.hidden=true;exercisePanel.hidden=true;notesPanel.hidden=true}
+    else if(e.key==='Escape'){menu.hidden=true;exercisePanel.hidden=true}
   });
   let touch=0;stage.addEventListener('touchstart',e=>touch=e.changedTouches[0].clientX,{passive:true});stage.addEventListener('touchend',e=>{const diff=touch-e.changedTouches[0].clientX;if(Math.abs(diff)>70)go(diff>0?1:-1)},{passive:true});
-  fetch('./notes.json').then(r=>r.ok?r.json():null).then(x=>{if(x&&Object.keys(x).length){notes=x;notesButton.hidden=false;render()}}).catch(()=>{});
-  window.addEventListener('hashchange',()=>{const m=location.hash.match(/^#j([12])-(\d+)$/);if(!m)return;const targetDay=Number(m[1]),targetIndex=Math.max(0,Math.min(deck.filter(s=>s.day===targetDay).length-1,Number(m[2])-1));if(day!==targetDay||index!==targetIndex){day=targetDay;index=targetIndex;render()}});
-  const match=location.hash.match(/^#j([12])-(\d+)$/);if(match){day=Number(match[1]);index=Math.max(0,Math.min(current().length-1,Number(match[2])-1))}
-  render();
+  window.addEventListener('hashchange',()=>{const m=location.hash.match(/^#j([123])-(\d+)$/);if(!m)return;const targetDay=Number(m[1]),targetIndex=Math.max(0,Math.min(deck.filter(s=>s.day===targetDay).length-1,Number(m[2])-1));if(day!==targetDay||index!==targetIndex){day=targetDay;index=targetIndex;render()}});
+  const match=location.hash.match(/^#j([123])-(\d+)$/);if(match){day=Number(match[1]);index=Math.max(0,Math.min(current().length-1,Number(match[2])-1))}
+  if(preview)document.body.classList.add('is-preview');
+  if(!preview){
+    window.DeckSync.onSlide((targetDay,targetIndex)=>{
+      const slides=deck.filter(s=>s.day===targetDay);
+      if(!slides.length)return;
+      targetIndex=Math.min(targetIndex,slides.length-1);
+      if(day===targetDay&&index===targetIndex)return;
+      day=targetDay;index=targetIndex;exercisePanel.hidden=true;render(false);
+    });
+    window.DeckSync.onRequest(()=>window.DeckSync.publish(day,index));
+  }
+  render(!preview);
 })();

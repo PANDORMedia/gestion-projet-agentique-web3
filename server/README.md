@@ -12,6 +12,12 @@ python3 server/app.py --demo
 
 Le serveur écoute sur `http://127.0.0.1:8765`. Utilisez `demo-key` pour les essais locaux. En classe, le formateur fournit une clé propre à votre équipe. Envoyez-la dans l'en-tête `X-Team-Key` depuis votre programme ; ne l'exposez pas dans une page web.
 
+## Tableau de bord du simulateur
+
+Ouvrez `http://127.0.0.1:8765/dashboard` et saisissez votre clé d'équipe. Vous pouvez parcourir les prestations, choisir une date et un nombre de participants, vérifier le prix et les places, puis copier les réponses JSON. L'onglet **Mon espace** affiche les options et réservations de votre équipe. Actualisez-le après les actions réalisées par votre application ou après un imprévu annoncé par le formateur.
+
+Le tableau de bord est en lecture seule. Pour poser une option, confirmer ou annuler une réservation, utilisez l'API depuis votre programme. La connexion au tableau de bord crée une session temporaire de 30 minutes dans un cookie `HttpOnly`. La clé saisie n'est pas placée dans l'URL ni conservée dans le navigateur par la page. Sur un réseau partagé, utilisez ce serveur uniquement dans un environnement de confiance ou derrière HTTPS.
+
 ## Consulter les offres et les disponibilités
 
 ```bash
@@ -24,7 +30,7 @@ Le catalogue accepte les filtres `destination` et `type` (`transport`, `hebergem
 
 ## Poser une option et réserver
 
-Cette partie est utilisée après J2. Une option bloque temporairement des places fictives. Une réservation demande une clé d'approbation et le nom du conseiller qui a validé l'action.
+Une option bloque temporairement des places fictives. Une réservation demande une clé d'approbation et le nom du conseiller qui a validé l'action.
 
 ```bash
 curl -X POST -H 'Content-Type: application/json' -H 'X-Team-Key: demo-key' \

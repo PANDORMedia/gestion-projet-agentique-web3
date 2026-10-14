@@ -4,7 +4,7 @@
 **Public :** WEB3, début d'année  
 **Volume :** 7 journées de 7 h : 4 journées de Gestion de projet / Conception (28 h), dont une en FOAD ; 3 journées d'Agentique IA (21 h)  
 **Format :** équipes de 3 à 4 ; apports courts, démonstrations, ateliers, réunions client jouées et soutenance d'équipe avec questions individuelles  
-**Priorité de production :** J1 pour le 15 octobre, J2 pour le 16 octobre ; J3 ensuite si le temps le permet
+**Supports préparés :** conception, fondations IA et actions IA ; progression complète sur sept journées
 
 ## Intention
 
@@ -38,7 +38,7 @@ La confirmation d'une réservation demande une validation humaine identifiable. 
 | Jour | Module | Noyau du cours et situation jouée | Preuve produite |
 |---|---|---|---|
 | **J1** | Gestion de projet / Conception | Le Product Owner rencontre le client et transmet le brief à l'équipe ; questions, acteurs, besoin, périmètre, premières hypothèses ; carte de l'environnement et choix initial d'organisation. | Notes du Product Owner, restitution et reformulation par l'équipe, carte du système, backlog initial, critères d'acceptation et registre des décisions. |
-| **J2** | Agentique IA | Fondations de l'IA et des modèles de langage ; assistant, workflow, agent et outils ; présentation de la charte IA ; conception et réalisation d'un premier appel à un outil du serveur. | Schéma de l'agent, premier parcours exécutable et trace de l'appel ; charte comprise et appliquée au TP. |
+| **J2** | Agentique IA | Charte IA en ouverture ; panorama des clients de développement, modèles et coûts ; fondations de l'IA, assistant, workflow, agent et outils ; premier appel à un outil du serveur. | Choix d'outil et de modèle argumenté, schéma de l'agent, premier parcours exécutable et trace de l'appel ; charte appliquée au TP. |
 | **J3** | Agentique IA | Architecture de l'agent ; contexte, état, outils, permissions et confirmation humaine ; intégration au parcours de réservation simulée. | Agent capable de consulter des prestations et de préparer une proposition ou une option sous contrôle humain. |
 | **J4** | Agentique IA | Évaluation : ambiguïtés, erreurs, indisponibilités, informations contradictoires et actions refusées ; tests, traces et amélioration. | Jeu de cas, résultats observés, corrections et limites expliquées. |
 | **J5 : FOAD** | Gestion de projet / Conception | Revue de conception après les découvertes techniques : parcours, données, composants, risques, dépendances et plan de livraison. Revue croisée entre équipes. | Dossier de conception révisé, décisions motivées et plan mis à jour. |
@@ -61,13 +61,12 @@ La confirmation d'une réservation demande une validation humaine identifiable. 
 
 | Temps | Séquence | Trace attendue |
 |---|---|---|
-| 45 min | Qu'appelle-t-on IA ? Comparaison des approches sur une même demande de voyage. | Capacités et limites identifiées. |
-| 60 min | Modèle de langage : instructions, contexte, données, sortie structurée, incertitude et erreurs. | Analyse d'une réponse plausible mais mal fondée. |
-| 105 min | Assistant, workflow, agent ; démonstration de la boucle d'action et du serveur fictif. | Schéma d'un agent et de ses appels d'outils. |
-| 30 min | **Charte IA fournie par le formateur**, présentée pour le reste de l'année ; application à trois situations du projet. | Décisions d'usage conformes à la charte. |
-| 60 min | Contrat du premier agent : mission, informations, outils, permissions, réponse et cas d'échec. | Contrat de fonctionnement court. |
+| 35 min | Ouverture et **charte IA fournie par le formateur** ; application à trois situations du projet. | Décisions d'usage conformes à la charte. |
+| 53 min | Clients CLI, IDE et graphiques ; formats d'API compatibles OpenAI et Anthropic, Ollama et LM Studio ; modèles datés, offres gratuites, veille, OpenRouter et coût. | Environnement et modèle choisis selon la mission, les fonctions réellement compatibles et le budget. |
+| 122 min | Fondations IA, modèle de langage, assistant, workflow et agent ; même demande de voyage et boucle d'action. | Réponse plausible analysée, mécanismes distingués et appel d'outil expliqué. |
+| 95 min | Contrat du premier agent : mission, informations, outils, permissions, serveur fictif, réponse et cas d'échec. | Contrat de fonctionnement court et frontières explicites. |
 | 90 min | TP guidé avec OpenRouter et un modèle gratuit : premier outil de consultation du serveur. | Réponse fondée sur une donnée consultée et trace d'exécution. |
-| 30 min | Démonstration, analyse des décisions de l'agent et bilan. | Limites et prochaine tâche identifiées. |
+| 25 min | Démonstration, analyse des décisions de l'agent et bilan. | Limites et prochaine tâche identifiées. |
 
 ## Charte IA de l'année
 
@@ -94,8 +93,6 @@ Les deux modules donnent lieu à **deux évaluations distinctes** sur le même p
 
 Une fonctionnalité montrée sans compréhension ou sans vérification ne suffit pas. Les étudiants doivent pouvoir expliquer ce qui vient du modèle, ce qui vient des outils, ce qui a été décidé par l'équipe et comment ils l'ont contrôlé. La richesse de l'interface n'est pas un critère autonome.
 
-## Supports à produire après validation
+## Supports disponibles
 
-Le format reprend uniquement le **moteur de présentation** des cours DevOps existants : navigation par jour, notes orateur, panneau d'exercices, aide, scripts de démonstration et déroulé formateur. Les contenus, cas, exercices, visuels et textes sont propres aux deux nouveaux modules. Les slides montrent des situations, des schémas, des états et des décisions avec très peu de texte ; le discours détaillé vit dans le script formateur.
-
-La première livraison comprend J1 et J2, la charte IA, les exercices, les notes orateur, le script formateur et le contrat du serveur fictif nécessaires aux TP. J3 vient ensuite si le temps le permet. Les supports seront publiés dans les dépôts Git dédiés quand ils seront prêts.
+Les supports comprennent les slides de conception et d'agentique IA, les briefs PDF, la charte IA, les exercices et démonstrations Markdown, ainsi que le simulateur et son contrat d'API. Le [README](README.md) donne les liens et les commandes de lancement.

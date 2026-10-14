@@ -4,6 +4,7 @@
 import argparse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -13,8 +14,16 @@ class CourseHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
     def do_GET(self):
-        if self.path in ("/", "/index.html"):
-            self.path = "/slides/index.html"
+        parsed = urlsplit(self.path)
+        if parsed.path in ("/", "/index.html"):
+            destination = "/slides/index.html"
+            if parsed.query:
+                destination += "?" + parsed.query
+            self.send_response(302)
+            self.send_header("Location", destination)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
         return super().do_GET()
 
 

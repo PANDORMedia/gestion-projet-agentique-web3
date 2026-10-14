@@ -1,5 +1,5 @@
 /**
- * DÉTOUR, J2 : point de départ pour le TP.
+ * DÉTOUR : point de départ pour le TP agentique.
  * Node.js 20+ ; aucune dépendance à installer.
  *
  * Depuis la racine du projet :

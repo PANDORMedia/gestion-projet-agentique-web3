@@ -1,4 +1,6 @@
-# J1 : Mission de l'équipe prestataire
+# Mission de l'équipe prestataire
+
+Le [brief client](../../output/pdf/brief-client.pdf) tient sur une page. Ce dossier contient les ateliers et les livrables attendus.
 
 Vous êtes mandatés par **DÉTOUR**, une petite agence fictive qui conçoit des voyages insolites et des week-ends surprises. Son responsable recevra les Product Owners des équipes lors d'une première réunion. Vous devez comprendre son activité et proposer l'environnement d'une application qui aide à préparer des offres de séjour à l'aide d'un agent IA.
 
@@ -10,9 +12,9 @@ Vous ne disposez d'aucun produit existant. Un serveur de prestations et de rése
 
 ## Vos responsabilités
 
-Pendant J1, vous devez découvrir le besoin, identifier les utilisateurs, concevoir les grandes interactions et choisir une façon de travailler. Vous pouvez proposer différents parcours, mais vous devez en sélectionner un pour une première version démontrable. Vos choix doivent être justifiés. Les questions auxquelles le client n'a pas encore répondu restent visibles dans votre dossier.
+Vous devez découvrir le besoin, identifier les utilisateurs, concevoir les grandes interactions et choisir une façon de travailler. Vous pouvez proposer différents parcours, mais vous devez en sélectionner un pour une première version démontrable. Vos choix doivent être justifiés. Les questions auxquelles le client n'a pas encore répondu restent visibles dans votre dossier.
 
-**À rendre en fin de journée :** un dossier de cadrage v1 suivant `MODELES.md`. Préparez un pitch de trois minutes pour le client : problème compris, parcours retenu, place de l'agent, décision humaine et prochain risque à lever.
+**À produire :** un dossier de cadrage v1 suivant les [modèles de livrables](MODELES.md). Préparez un pitch de trois minutes pour le client : problème compris, parcours retenu, place de l'agent, décision humaine et prochain risque à lever.
 
 ## Atelier 1 : Préparer la réunion client
 
@@ -20,7 +22,7 @@ Pendant J1, vous devez découvrir le besoin, identifier les utilisateurs, concev
 
 1. Écrivez au moins huit questions. Classez-les sous : utilisateurs, processus actuel, données, contraintes, résultat attendu.
 2. Choisissez les trois questions dont la réponse pourrait changer le plus votre conception.
-3. Donnez à chaque question un destinataire : commanditaire, conseiller ou voyageur. Vous ne rencontrerez aujourd'hui que le commanditaire ; notez ce qu'il faudra confirmer auprès des autres.
+3. Donnez à chaque question un destinataire : commanditaire, conseiller ou voyageur. Lors de cette réunion, vous ne rencontrerez que le commanditaire ; notez ce qu'il faudra confirmer auprès des autres.
 4. Désignez votre **Product Owner (PO)**. Il est le seul membre de l'équipe présent à la première réunion client. Il pose les questions convenues et prend des notes exploitables. Les autres membres restent hors de la réunion, préparent la grille de réception et les hypothèses à vérifier. Désignez parmi eux une personne qui anime la retransmission et une qui repère les informations non sourcées.
 
 Après l'entretien, le PO dispose de dix minutes pour transmettre oralement les informations à l'équipe et partager ses notes brutes. L'équipe reformule ensuite le besoin **sans aide du client**, compare sa synthèse aux notes et repère les manques ou contradictions. Elle prépare au maximum deux questions de suivi, que **seul le PO** retourne poser au client. Le PO rapporte les réponses et leur source.
@@ -57,7 +59,7 @@ Vous ne serez pas évalués sur la fidélité à un rituel. Vous serez évalués
 
 ## Atelier 5 : Première architecture et décisions
 
-**Temps : 60 min.** Dessinez les grands composants et leurs échanges : interface, application, agent IA, modèle via OpenRouter, données de votre produit, serveur fictif. Placez les secrets et les validations humaines au bon endroit. Vous ne devez pas choisir aujourd'hui tous les détails techniques.
+**Temps : 60 min.** Dessinez les grands composants et leurs échanges : interface, application, agent IA, modèle via OpenRouter, données de votre produit, serveur fictif. Placez les secrets et les validations humaines au bon endroit. Vous ne devez pas choisir tous les détails techniques à ce stade.
 
 Renseignez trois décisions dans le registre :
 
@@ -73,6 +75,6 @@ Pour chaque décision : options envisagées, raison du choix, risque et signe qu
 
 La revue peut apporter une nouvelle contrainte. Vous pouvez proposer une adaptation, réduire le périmètre ou demander un arbitrage : justifiez votre décision.
 
-## Pour préparer J2
+## Pour préparer l'agent
 
 Formulez une mission initiale de l'agent en deux phrases : « L'agent aide [acteur] à [tâche] à partir de [sources]. Il peut [actions] et doit demander une validation avant [action engageante]. » Vous pourrez réviser cette mission après l'introduction à l'IA et le premier essai avec le serveur.

@@ -1,4 +1,4 @@
-# J1 : Modèles de livrables
+# Modèles de livrables
 
 Copiez les cadres utiles dans votre dossier d'équipe. Ils servent à rendre vos décisions visibles ; une autre mise en forme convient si les mêmes informations y figurent.
 
@@ -90,8 +90,8 @@ Un critère d'acceptation décrit un comportement observable. Exemple de forme :
 |---|---|---|---|---|---|
 | … | … | … | … | … | … |
 
-## 7. Transmission à J2
+## 7. Transmission au module agentique
 
 **Mission initiale de l'agent :** L'agent aide … à … à partir de … Il peut … et doit demander une validation avant …  
 **Première donnée du serveur à consulter :** …  
-**Question technique que nous voulons trancher en J2 :** …
+**Question technique que nous voulons trancher avec le premier agent :** …
